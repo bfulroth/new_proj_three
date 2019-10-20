@@ -1,0 +1,27 @@
+language: python
+dist: xenial
+python:
+- 3.7
+before_install:
+- echo -e "machine github.com\n  login $CI_USER_TOKEN" > ~/.netrc
+install:
+- pip install pipenv
+- pipenv install --system --deploy --ignore-pipfile
+stages:
+- test
+jobs:
+  include:
+  - stage: test
+    script: pytest --cov-report xml --cov-report term
+    install:
+    - pipenv install --dev --ignore-pipfile --deploy
+    before_script:
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+      > ./cc-test-reporter
+    - chmod +x ./cc-test-reporter
+    - "./cc-test-reporter before-build"
+    after_script:
+    - "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
+env:
+  global:
+    secure: IPHJZPbPxNIADi8/ejnMGAFgzalSCq/kLFuFAwM0EGw7YrOVM313mTApClFYIb+QaGxsdzhZMr4WlzjHaJlbTBmvPnReQfq3DoFA5CxSsgyDUUGdS2RF02SxV/3522hZbD7dW8nQifRFUWFFnj+vMhfkt6QJfDNOx2EDBoMDGLYzH65RaezGq3nn6g1Wdo2r7pRErKCfHnnQ+W2PWF/V+UiornCCjmZ5KNGR0UbkWv2BAbMXny7Y3bfACD40+aK/Mjz2TdgFT94nvnp7P357P5pHtY4S0y5V3bBtYxlLF/E8jO9/YDnAtQsln4D80hldAHvYADyxjSgWduYtGObDSpfOiwWTpsJiCpOoa7n7md8X1ldQulbusc1cIwbx0zjBBAJXnX6TOvr5xFfMu5oqOVvAlKAgw8pi7J02txAttNNwdEp61xLYPfU7eDvhmQQZnk19IGcgJDRFhjQpcLMqcTiKFRIcrlvgVoPs+Dz9Fv5v9LC0Dsg5ODlM0SL37mPMh6xAlhryEvzhZUEDjTadkkBVjmD+ZBFdxYE4OY1KvEIO3+Kp+dgtE/GCbEISmiHc1NFBYSHF288QfdYqwo2hW2VDkijU4R2u2txP5XQRRtggplLc69Z+gHcJ1pRwuMT8NyqzlU8T0/+LT2/AQBSi3e1Rf3MEcNi084d/1xSR30s=

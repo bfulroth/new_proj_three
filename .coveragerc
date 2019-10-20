@@ -1,0 +1,6 @@
+[report]
+omit =
+    */tests.py
+    */test_*.py
+    */*_tests.py
+    */new_proj_three/__main__.py
